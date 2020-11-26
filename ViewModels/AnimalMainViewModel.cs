@@ -72,8 +72,6 @@ namespace DierenTuinTestApp.ViewModels
         {
             AllAnimals = new ObservableCollection<Animal>()
             {
-                new Monkey(),
-                new Elephant(),
                 new Lion()
             };
             AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
@@ -155,40 +153,25 @@ namespace DierenTuinTestApp.ViewModels
         #endregion
 
         #region RelayCommands
-        private RelayCommand _FeedAllCmd;
         public RelayCommand FeedAllCmd
         {
             get
             {
-                if (_FeedAllCmd == null)
-                {
-                    _FeedAllCmd = new RelayCommand(FeedAll, IsAbleToFeed);
-                }
-                return _FeedAllCmd;
+                return new RelayCommand(FeedAll, IsAbleToFeed);
             }
         }
-        private RelayCommand _FeedGroupCmd;
         public RelayCommand FeedGroupCmd
         {
             get
             {
-                if (_FeedGroupCmd == null)
-                {
-                    _FeedGroupCmd = new RelayCommand(FeedGroup, IsAbleToFeedGroup);
-                }
-                return _FeedGroupCmd;
+                return new RelayCommand(FeedGroup, IsAbleToFeedGroup);
             }
         }
-        private RelayCommand _AddAnimalCmd;
         public RelayCommand AddAnimalCmd
         {
             get
             {
-                if (_AddAnimalCmd == null)
-                {
-                    _AddAnimalCmd = new RelayCommand(AddAnimal);
-                }
-                return _AddAnimalCmd;
+                return new RelayCommand(AddAnimal);
             }
         }
         #endregion

@@ -39,17 +39,18 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Feed Group" Command="{Binding FeedGroupCmd}"/>
+                    <Button Grid.Column="0" Content="Feed Group" Command="{Binding FeedGroupCmd}">
+                    </Button>
                     <ComboBox Grid.Column="1" ItemsSource="{Binding AnimalTypesArr}" 
                               SelectedItem="{Binding SelctFeedType}" SelectedIndex="0">
                     </ComboBox>
-                 </Grid>
+                </Grid>
 
             </StackPanel>
         </Grid>
 
         <Grid Grid.Column="1" Background="Gainsboro">
-        <ItemsControl ItemsSource="{Binding AllAnimals}" ItemTemplate="{StaticResource AnimalRow}" Margin="2">
+            <ItemsControl ItemsSource="{Binding AllAnimals}" ItemTemplate="{StaticResource AnimalRow}" Margin="2">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <VirtualizingStackPanel/>
@@ -57,5 +58,6 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </Grid>
+
     </Grid>
 </UserControl>
