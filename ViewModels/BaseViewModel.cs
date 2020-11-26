@@ -12,7 +12,7 @@ namespace DierenTuinTestApp.ViewModels
     {
         #region INotifyPropertyChanged Members  
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

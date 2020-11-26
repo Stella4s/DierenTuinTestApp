@@ -9,11 +9,13 @@ namespace DierenTuinTestApp.Models
         #region properties
         public override int EnergyPerTick => 2;
         public override int RequiredFoodAmount => 10;
+        public override AnimalTypes Type => AnimalTypes.Monkey;
         #endregion
 
         public Monkey()
         {
             Energy = 60;
+            Name = "Monkey";
         }
 
     }

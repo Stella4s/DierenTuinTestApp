@@ -9,6 +9,12 @@ namespace DierenTuinTestApp.Models
         #region properties
         public override int EnergyPerTick => 5;
         public override int RequiredFoodAmount => 50;
+        public override AnimalTypes Type => AnimalTypes.Elephant;
         #endregion
+
+        public Elephant()
+        {
+            Name = "Elephant";
+        }
     }
 }

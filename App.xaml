@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:DierenTuinTestApp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary Source="ResourceDict1.xaml"/>
     </Application.Resources>
 </Application>

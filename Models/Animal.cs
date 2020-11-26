@@ -35,6 +35,7 @@ namespace DierenTuinTestApp.Models
         }
         public abstract int EnergyPerTick { get; }
         public abstract int RequiredFoodAmount { get; }
+        public abstract AnimalTypes Type { get; }
         #endregion
 
         public Animal()
@@ -58,5 +59,12 @@ namespace DierenTuinTestApp.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+    }
+
+    public enum AnimalTypes
+    {
+        Monkey,
+        Lion,
+        Elephant
     }
 }
