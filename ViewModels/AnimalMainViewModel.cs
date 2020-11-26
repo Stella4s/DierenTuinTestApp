@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows.Threading;
 
 namespace DierenTuinTestApp.ViewModels
 {
@@ -17,6 +18,7 @@ namespace DierenTuinTestApp.ViewModels
         private AnimalTypes[] _AnimalTypesArr;
         private AnimalTypes _SelctFeedType;
         private AnimalTypes _SelctAddType;
+        private DispatcherTimer dispatcherTimer;
         #endregion
 
         #region public properties
@@ -60,11 +62,13 @@ namespace DierenTuinTestApp.ViewModels
 
         public AnimalMainViewModel()
         {
-            Initialize();
+            InitializeEnumerables();
+            InitalizeTimer();
         }
 
         #region Methods
-        public void Initialize()
+        #region Initalization & Helper methods
+        private void InitializeEnumerables()
         {
             AllAnimals = new ObservableCollection<Animal>()
             {
@@ -74,7 +78,34 @@ namespace DierenTuinTestApp.ViewModels
             };
             AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
         }
+        private void InitalizeTimer()
+        {
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(Timer_Tick);
+            dispatcherTimer.Interval = TimeSpan.FromMilliseconds(500);
+            dispatcherTimer.Start();
+        }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            foreach(Animal animal in AllAnimals.ToList())
+            {
+                animal.UseEnergy();
+                if (HasAnimalStarved(animal))
+                    AllAnimals.Remove(animal);
+            }
+        }
+        private bool HasAnimalStarved(Animal animal)
+        {
+            if(animal != null)
+            {
+                if (animal.Energy <= 0)
+                    return true;
+            }
+            return false;
+        }
+        #endregion
 
+        #region ActionMethods
         public Animal GetAnimal(AnimalTypes animalType)
         {
             var ns = typeof(AnimalTypes).Namespace; //or your classes namespace if different
@@ -102,6 +133,8 @@ namespace DierenTuinTestApp.ViewModels
                 animal.Eat();
             }
         }
+        #endregion
+        #region CanExecute Methods
         public bool IsAbleToFeed()
         {
             if (AllAnimals.Count != 0)
@@ -118,6 +151,7 @@ namespace DierenTuinTestApp.ViewModels
             }
             return false;
         }
+        #endregion
         #endregion
 
         #region RelayCommands
