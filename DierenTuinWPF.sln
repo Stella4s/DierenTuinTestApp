@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DierenTuinTestApp", "DierenTuinTestApp.csproj", "{3C1C782F-4AA7-4795-927C-867007122BF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DierenTuinWPF", "DierenTuinWPF.csproj", "{3C1C782F-4AA7-4795-927C-867007122BF4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

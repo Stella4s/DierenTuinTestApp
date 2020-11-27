@@ -1,5 +1,5 @@
-﻿using DierenTuinTestApp.Models;
-using DierenTuinTestApp.Services;
+﻿using DierenTuinWPF.Models;
+using DierenTuinWPF.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Threading;
 
-namespace DierenTuinTestApp.ViewModels
+namespace DierenTuinWPF.ViewModels
 {
     public class AnimalMainViewModel : BaseViewModel
     {
@@ -72,10 +72,23 @@ namespace DierenTuinTestApp.ViewModels
         {
             AllAnimals = new ObservableCollection<Animal>()
             {
-                new Lion()
+                new Lion(),
+                new Monkey(),
+                new Elephant()
             };
+            AllAnimals.CollectionChanged += AllAnimals_CollectionChanged;
             AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
         }
+        private void AllAnimals_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //Using CommandManager eventhandling
+            System.Windows.Input.CommandManager.InvalidateRequerySuggested();
+
+            //Using RaiseCanExecuteChanged eventhandling
+            //FeedAllCmd.RaiseCanExecuteChanged();
+            //FeedGroupCmd.RaiseCanExecuteChanged();
+        }
+
         private void InitalizeTimer()
         {
             dispatcherTimer = new DispatcherTimer();
@@ -89,7 +102,9 @@ namespace DierenTuinTestApp.ViewModels
             {
                 animal.UseEnergy();
                 if (HasAnimalStarved(animal))
+                {
                     AllAnimals.Remove(animal);
+                }
             }
         }
         private bool HasAnimalStarved(Animal animal)
@@ -153,25 +168,39 @@ namespace DierenTuinTestApp.ViewModels
         #endregion
 
         #region RelayCommands
-        public RelayCommand FeedAllCmd
+        private RelayCommand _FeedAllCmd; public RelayCommand FeedAllCmd
         {
             get
             {
-                return new RelayCommand(FeedAll, IsAbleToFeed);
+                if (_FeedAllCmd == null) {
+                    _FeedAllCmd = new RelayCommand(
+                        p => FeedAll(),
+                        p => IsAbleToFeed());
+                }
+                return _FeedAllCmd;
             }
         }
-        public RelayCommand FeedGroupCmd
+        private RelayCommand _FeedGroupCmd; public RelayCommand FeedGroupCmd
         {
             get
             {
-                return new RelayCommand(FeedGroup, IsAbleToFeedGroup);
+                if (_FeedGroupCmd == null) {
+                    _FeedGroupCmd = new RelayCommand(
+                        p => FeedGroup(),
+                        p => IsAbleToFeedGroup());
+                }
+                return _FeedGroupCmd;
             }
         }
-        public RelayCommand AddAnimalCmd
+        private RelayCommand _AddAnimalCmd; public RelayCommand AddAnimalCmd
         {
             get
             {
-                return new RelayCommand(AddAnimal);
+                if (_AddAnimalCmd == null) {
+                    _AddAnimalCmd = new RelayCommand(
+                        p => AddAnimal());
+                }
+                return _AddAnimalCmd;
             }
         }
         #endregion

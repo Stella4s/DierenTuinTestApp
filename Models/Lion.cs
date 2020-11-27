@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DierenTuinTestApp.Models
+namespace DierenTuinWPF.Models
 {
     public sealed class Lion : Animal
     {

@@ -1,7 +1,7 @@
-﻿<Application x:Class="DierenTuinTestApp.App"
+﻿<Application x:Class="DierenTuinWPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:DierenTuinTestApp"
+             xmlns:local="clr-namespace:DierenTuinWPF"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary Source="ResourceDict1.xaml"/>

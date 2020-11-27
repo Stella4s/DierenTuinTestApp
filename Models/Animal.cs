@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace DierenTuinTestApp.Models
+namespace DierenTuinWPF.Models
 {
     public abstract class Animal : INotifyPropertyChanged
     {

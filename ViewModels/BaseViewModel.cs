@@ -1,4 +1,4 @@
-﻿using DierenTuinTestApp.Services;
+﻿using DierenTuinWPF.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace DierenTuinTestApp.ViewModels
+namespace DierenTuinWPF.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
