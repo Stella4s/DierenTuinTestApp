@@ -23,16 +23,23 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Margin="4">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Content="Add" Command="{Binding AddAnimalCmd}"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding AnimalTypesArr}" 
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Content="Add" Command="{Binding AddAnimalCmd}"/>
+                        <ComboBox Grid.Column="1" Template="{DynamicResource ComboBoxAsBtnTemplate}"
+                              ItemsSource="{Binding AnimalTypesArr}" 
                               SelectedItem="{Binding SelctAddType}" SelectedIndex="0">
-                    </ComboBox>
-                </Grid>
+                        </ComboBox>
+                    </Grid>
+                
+                    <Button Content="Sort by Group" Command="{Binding SortAnimalTypeCmd}"/>
+                    <Button Content="Sort by Energy" Command="{Binding SortAnimalEnergyCmd}"/>
+            
+               
                 <Button Content="Feed All" Command="{Binding FeedAllCmd}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -41,7 +48,8 @@
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Content="Feed Group" Command="{Binding FeedGroupCmd}">
                     </Button>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding AnimalTypesArr}" 
+                    <ComboBox Grid.Column="1" Template="{DynamicResource ComboBoxAsBtnTemplate}"
+                              ItemsSource="{Binding AnimalTypesArr}" 
                               SelectedItem="{Binding SelctFeedType}" SelectedIndex="0">
                     </ComboBox>
                 </Grid>
