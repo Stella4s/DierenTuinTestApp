@@ -148,7 +148,7 @@ namespace DierenTuinWPF.ViewModels
         }
         public void SortAnimalEnergy()
         {
-            AllAnimals.Sort(ani => ani.Energy, IsAscendSortG);
+            AllAnimals.Sort(ani => ani.RelativeEnergy, IsAscendSortG);
             IsAscendSortG = !IsAscendSortG;
         }
         public void FeedAll()

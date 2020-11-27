@@ -11,6 +11,7 @@ namespace DierenTuinWPF.Models
         #region private properties
         private string _Name;
         private int _Energy;
+        private int _RelativeEnergy;
         private static readonly int EnergyIncrease = 25;
         #endregion
 
@@ -29,10 +30,22 @@ namespace DierenTuinWPF.Models
             get { return _Energy; }
             set
             {
+                if (value > MaxEnergy)
+                    value = MaxEnergy;
                 _Energy = value;
                 OnPropertyChanged();
             }
         }
+        public int RelativeEnergy
+        {
+            get { return _RelativeEnergy; }
+            set
+            {
+                _RelativeEnergy = value;
+                OnPropertyChanged();
+            }
+        }
+        public abstract int MaxEnergy { get; }
         public abstract int EnergyPerTick { get; }
         public abstract int RequiredFoodAmount { get; }
         public abstract AnimalTypes Type { get; }
@@ -50,6 +63,12 @@ namespace DierenTuinWPF.Models
         public void UseEnergy()
         {
             Energy -= EnergyPerTick;
+            GetRelativeEnergy();
+        }
+        private int GetRelativeEnergy()
+        {
+            int result = (int)((double)Energy / MaxEnergy * 100);
+            return result;
         }
 
         #region INotifyPropertyChanged Members  
