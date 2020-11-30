@@ -1,5 +1,4 @@
-﻿using DierenTuinWPF.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

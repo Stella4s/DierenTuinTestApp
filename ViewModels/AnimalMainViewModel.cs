@@ -1,5 +1,5 @@
 ﻿using DierenTuinWPF.Models;
-using DierenTuinWPF.Services;
+using DierenTuinWPF.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +19,9 @@ namespace DierenTuinWPF.ViewModels
         private AnimalTypes _SelctFeedType;
         private AnimalTypes _SelctAddType;
         private DispatcherTimer dispatcherTimer;
+
+        private bool IsAscendSortT;
+        private bool IsAscendSortG;
         #endregion
 
         #region public properties
@@ -62,13 +65,13 @@ namespace DierenTuinWPF.ViewModels
 
         public AnimalMainViewModel()
         {
-            InitializeEnumerables();
+            InitializeVariables();
             InitalizeTimer();
         }
 
         #region Methods
         #region Initalization & Helper methods
-        private void InitializeEnumerables()
+        private void InitializeVariables()
         {
             AllAnimals = new ObservableCollection<Animal>()
             {
@@ -78,6 +81,9 @@ namespace DierenTuinWPF.ViewModels
             };
             AllAnimals.CollectionChanged += AllAnimals_CollectionChanged;
             AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
+
+            IsAscendSortG = true;
+            IsAscendSortT = true;
         }
         private void AllAnimals_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -131,6 +137,20 @@ namespace DierenTuinWPF.ViewModels
         {
             AllAnimals.Add(GetAnimal(SelctAddType));
         }
+        /// <summary>
+        /// Sorts by group, ascending or descending.
+        /// </summary>
+        public void SortAnimalType()
+        {
+            AllAnimals.Sort(ani => ani.Type, IsAscendSortT);
+            //Switch boolean to sort in opposite order next click.
+            IsAscendSortT = !IsAscendSortT;
+        }
+        public void SortAnimalEnergy()
+        {
+            AllAnimals.Sort(ani => ani.RelativeEnergy, IsAscendSortG);
+            IsAscendSortG = !IsAscendSortG;
+        }
         public void FeedAll()
         {
             foreach(Animal animal in AllAnimals)
@@ -148,16 +168,25 @@ namespace DierenTuinWPF.ViewModels
         }
         #endregion
         #region CanExecute Methods
-        public bool IsAbleToFeed()
+        public bool HasAnimals()
         {
             if (AllAnimals.Count != 0)
                 return true;
             else
                 return false;
         }
+        public bool HasMultipleTypes()
+        {
+            if (HasAnimals())
+            {
+                if (AllAnimals.GroupBy(ani => ani.Type).Count() > 1)
+                    return true;
+            }
+            return false;
+        }
         public bool IsAbleToFeedGroup()
         {
-            if (IsAbleToFeed())
+            if (HasAnimals())
             {
                 if (AllAnimals.Where(ani => ani.Type == SelctFeedType).Any())
                     return true;
@@ -175,7 +204,7 @@ namespace DierenTuinWPF.ViewModels
                 if (_FeedAllCmd == null) {
                     _FeedAllCmd = new RelayCommand(
                         p => FeedAll(),
-                        p => IsAbleToFeed());
+                        p => HasAnimals());
                 }
                 return _FeedAllCmd;
             }
@@ -201,6 +230,32 @@ namespace DierenTuinWPF.ViewModels
                         p => AddAnimal());
                 }
                 return _AddAnimalCmd;
+            }
+        }
+        private RelayCommand _SortAnimalTypeCmd; public RelayCommand SortAnimalTypeCmd
+        {
+            get
+            {
+                if (_SortAnimalTypeCmd == null)
+                {
+                    _SortAnimalTypeCmd = new RelayCommand(
+                        p => SortAnimalType(),
+                        p => HasMultipleTypes());
+                }
+                return _SortAnimalTypeCmd;
+            }
+        }
+        private RelayCommand _SortAnimalEnergyCmd; public RelayCommand SortAnimalEnergyCmd
+        {
+            get
+            {
+                if (_SortAnimalEnergyCmd == null)
+                {
+                    _SortAnimalEnergyCmd = new RelayCommand(
+                        p => SortAnimalEnergy(),
+                        p => HasAnimals());
+                }
+                return _SortAnimalEnergyCmd;
             }
         }
         #endregion
