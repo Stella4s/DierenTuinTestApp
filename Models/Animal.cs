@@ -13,6 +13,7 @@ namespace DierenTuinWPF.Models
         private int _Energy;
         private int _RelativeEnergy;
         private static readonly int EnergyIncrease = 25;
+        private bool IsStarvingCalled;
         #endregion
 
         #region public properties
@@ -55,6 +56,7 @@ namespace DierenTuinWPF.Models
         {
             Energy = 100;
             GetRelativeEnergy();
+            IsStarvingCalled = false;
         }
 
         public void Eat()
@@ -66,10 +68,29 @@ namespace DierenTuinWPF.Models
         {
             Energy -= EnergyPerTick;
             GetRelativeEnergy();
+
+            //If in 5 seconds Energy would be less than 0.
+            if ((Energy - (EnergyPerTick * 10) <= 0 ))
+            {
+                OnIsStarving(EventArgs.Empty);
+            }
         }
         private void GetRelativeEnergy()
         {
             RelativeEnergy = (int)((double)Energy / MaxEnergy * 100);
+        }
+
+        public event EventHandler IsStarving;
+        protected void OnIsStarving(EventArgs e)
+        {
+            EventHandler handler = IsStarving;
+
+            //Check if IsStarvingCalled true, to prevent repeat firing IsStarving.
+            if ((handler != null) && !IsStarvingCalled)
+            {
+                IsStarvingCalled = true;
+                handler(this, e);
+            }
         }
 
         #region INotifyPropertyChanged Members  

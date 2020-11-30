@@ -19,6 +19,8 @@ namespace DierenTuinWPF.ViewModels
         private AnimalTypes _SelctFeedType;
         private AnimalTypes _SelctAddType;
         private DispatcherTimer dispatcherTimer;
+        private int maxAnimals = 20;
+        private ObservableCollection<string> _Messages;
 
         private bool IsAscendSortT;
         private bool IsAscendSortG;
@@ -61,6 +63,15 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
+        public ObservableCollection<string> Messages
+        {
+            get { return _Messages; }
+            set
+            {
+                _Messages = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
 
         public AnimalMainViewModel()
@@ -79,8 +90,13 @@ namespace DierenTuinWPF.ViewModels
                 new Monkey(),
                 new Elephant()
             };
+            //Add eventHandlers
+            foreach (Animal ani in AllAnimals)
+                ani.IsStarving += Animal_IsStarving; 
             AllAnimals.CollectionChanged += AllAnimals_CollectionChanged;
+
             AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
+            Messages = new ObservableCollection<string>();
 
             IsAscendSortG = true;
             IsAscendSortT = true;
@@ -123,6 +139,21 @@ namespace DierenTuinWPF.ViewModels
             return false;
         }
         #endregion
+        #region MessageMethods
+        public void Animal_IsStarving(object sender, EventArgs e)
+        {
+            try
+            {
+                Animal animal = sender as Animal;
+                Messages.Add(new string(string.Format("{0} is starving.", animal.Name)));
+            }
+            catch (InvalidCastException exc)
+            {
+                Console.WriteLine("Invalid Cast Exception: {0}", exc.Message);
+            }
+
+        }
+        #endregion
 
         #region ActionMethods
         public Animal GetAnimal(AnimalTypes animalType)
@@ -135,8 +166,12 @@ namespace DierenTuinWPF.ViewModels
 
         public void AddAnimal()
         {
-            AllAnimals.Add(GetAnimal(SelctAddType));
+            //Instantiate animal, connect event handler, add animal to collection.
+            var tempAnimal = GetAnimal(SelctAddType);
+            tempAnimal.IsStarving += Animal_IsStarving;
+            AllAnimals.Add(tempAnimal);
         }
+
         /// <summary>
         /// Sorts by group, ascending or descending.
         /// </summary>
@@ -193,6 +228,13 @@ namespace DierenTuinWPF.ViewModels
             }
             return false;
         }
+        public bool HasReachedMaxAnimals()
+        {
+            if (AllAnimals.Count == maxAnimals)
+                return true;
+            else
+                return false;
+        }
         #endregion
         #endregion
 
@@ -227,7 +269,8 @@ namespace DierenTuinWPF.ViewModels
             {
                 if (_AddAnimalCmd == null) {
                     _AddAnimalCmd = new RelayCommand(
-                        p => AddAnimal());
+                        p => AddAnimal(),
+                        p => !HasReachedMaxAnimals());
                 }
                 return _AddAnimalCmd;
             }
