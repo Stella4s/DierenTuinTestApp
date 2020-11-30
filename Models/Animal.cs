@@ -54,21 +54,22 @@ namespace DierenTuinWPF.Models
         public Animal()
         {
             Energy = 100;
+            GetRelativeEnergy();
         }
 
         public void Eat()
         {
             Energy += EnergyIncrease;
+            GetRelativeEnergy();
         }
         public void UseEnergy()
         {
             Energy -= EnergyPerTick;
             GetRelativeEnergy();
         }
-        private int GetRelativeEnergy()
+        private void GetRelativeEnergy()
         {
-            int result = (int)((double)Energy / MaxEnergy * 100);
-            return result;
+            RelativeEnergy = (int)((double)Energy / MaxEnergy * 100);
         }
 
         #region INotifyPropertyChanged Members  

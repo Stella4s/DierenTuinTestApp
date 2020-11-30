@@ -55,6 +55,9 @@
 
                 </Grid>
             </StackPanel>
+            <Grid Grid.Row="1">
+
+            </Grid>
         </Grid>
 
         <Grid Grid.Column="1" Background="Gainsboro">
