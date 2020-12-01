@@ -19,8 +19,8 @@ namespace DierenTuinWPF.ViewModels
         private AnimalTypes _SelctFeedType;
         private AnimalTypes _SelctAddType;
         private DispatcherTimer dispatcherTimer;
-        private int maxAnimals = 20;
-        private ObservableCollection<string> _Messages;
+        private readonly int maxAnimals = 20;
+        private ObservableCollection<Message> _Messages;
 
         private bool IsAscendSortT;
         private bool IsAscendSortG;
@@ -63,7 +63,7 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public ObservableCollection<string> Messages
+        public ObservableCollection<Message> Messages
         {
             get { return _Messages; }
             set
@@ -92,15 +92,20 @@ namespace DierenTuinWPF.ViewModels
             };
             //Add eventHandlers
             foreach (Animal ani in AllAnimals)
-                ani.IsStarving += Animal_IsStarving; 
+            { 
+                ani.IsStarving += Animal_IsStarving;
+                ani.HasDied += Animal_HasDied;
+            }
             AllAnimals.CollectionChanged += AllAnimals_CollectionChanged;
 
             AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
-            Messages = new ObservableCollection<string>();
+
+            Messages = new ObservableCollection<Message>();
 
             IsAscendSortG = true;
             IsAscendSortT = true;
         }
+
         private void AllAnimals_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //Using CommandManager eventhandling
@@ -120,13 +125,17 @@ namespace DierenTuinWPF.ViewModels
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
+            //Cast AllAnimals.ToList to be able to enumerate through it.
+            //Whilst possibly removing animals from collection.
             foreach(Animal animal in AllAnimals.ToList())
             {
                 animal.UseEnergy();
-                if (HasAnimalStarved(animal))
+
+                //Old (more efficient) method to check if animal has starved. Currently replaced with HasDied event.
+                /*if (HasAnimalStarved(animal))
                 {
                     AllAnimals.Remove(animal);
-                }
+                }*/
             }
         }
         private bool HasAnimalStarved(Animal animal)
@@ -145,13 +154,25 @@ namespace DierenTuinWPF.ViewModels
             try
             {
                 Animal animal = sender as Animal;
-                Messages.Add(new string(string.Format("{0} is starving.", animal.Name)));
+                Messages.Add(new Message { Text = (new string(string.Format("{0} is starving.", animal.Name))), Urgency = Urgency.High });
             }
             catch (InvalidCastException exc)
             {
                 Console.WriteLine("Invalid Cast Exception: {0}", exc.Message);
             }
-
+        }
+        public void Animal_HasDied(object sender, EventArgs e)
+        {
+            try
+            {
+                Animal animal = sender as Animal;
+                Messages.Add(new Message { Text = (new string(string.Format("{0} has died.", animal.Name))), Urgency = Urgency.Medium });
+                AllAnimals.Remove(animal);
+            }
+            catch (InvalidCastException exc)
+            {
+                Console.WriteLine("Invalid Cast Exception: {0}", exc.Message);
+            }
         }
         #endregion
 
@@ -169,6 +190,7 @@ namespace DierenTuinWPF.ViewModels
             //Instantiate animal, connect event handler, add animal to collection.
             var tempAnimal = GetAnimal(SelctAddType);
             tempAnimal.IsStarving += Animal_IsStarving;
+            tempAnimal.HasDied += Animal_HasDied;
             AllAnimals.Add(tempAnimal);
         }
 

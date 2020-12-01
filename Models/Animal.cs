@@ -13,7 +13,7 @@ namespace DierenTuinWPF.Models
         private int _Energy;
         private int _RelativeEnergy;
         private static readonly int EnergyIncrease = 25;
-        private bool IsStarvingCalled;
+        private bool FiredIsStarving;
         #endregion
 
         #region public properties
@@ -56,42 +56,52 @@ namespace DierenTuinWPF.Models
         {
             Energy = 100;
             GetRelativeEnergy();
-            IsStarvingCalled = false;
+            FiredIsStarving = false;
         }
 
         public void Eat()
         {
             Energy += EnergyIncrease;
             GetRelativeEnergy();
+
+            //Check if animal still is starving. Reset FiredIsStarving.
+            if (!(RelativeEnergy <= 15))
+                FiredIsStarving = false;          
         }
         public void UseEnergy()
         {
             Energy -= EnergyPerTick;
             GetRelativeEnergy();
 
-            //If in 5 seconds Energy would be less than 0.
-            if ((Energy - (EnergyPerTick * 10) <= 0 ))
-            {
+            if (Energy <= 0)
+                OnHasDied(EventArgs.Empty);
+            if (RelativeEnergy <= 15)
                 OnIsStarving(EventArgs.Empty);
-            }
         }
         private void GetRelativeEnergy()
         {
             RelativeEnergy = (int)((double)Energy / MaxEnergy * 100);
         }
 
+        #region events
         public event EventHandler IsStarving;
         protected void OnIsStarving(EventArgs e)
         {
             EventHandler handler = IsStarving;
 
-            //Check if IsStarvingCalled true, to prevent repeat firing IsStarving.
-            if ((handler != null) && !IsStarvingCalled)
+            //Check if FiredIsStarving true, to prevent repeat firing IsStarving.
+            if ((handler != null) && !FiredIsStarving)
             {
-                IsStarvingCalled = true;
+                FiredIsStarving = true;
                 handler(this, e);
             }
         }
+        public event EventHandler HasDied;
+        protected void OnHasDied(EventArgs e)
+        {
+            HasDied?.Invoke(this, e);
+        }
+        #endregion
 
         #region INotifyPropertyChanged Members  
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

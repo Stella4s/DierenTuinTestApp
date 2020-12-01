@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewmodel="clr-namespace:DierenTuinWPF.ViewModels"
              xmlns:local="clr-namespace:DierenTuinWPF.Views"
+             xmlns:utility="clr-namespace:DierenTuinWPF.Utility"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -56,18 +57,14 @@
                 </Grid>
             </StackPanel>
             <Grid Grid.Row="1" Margin="0" Background="Gainsboro">
-                <ScrollViewer VerticalScrollBarVisibility="Hidden">
-                    <ItemsControl ItemsSource="{Binding Messages}">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="5,2"
+                              utility:AutoScrollBehavior.AutoScroll="True">
+                    <ItemsControl ItemsSource="{Binding Messages}" ItemTemplate="{StaticResource MessageTemplate}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel/>
+                                <StackPanel VerticalAlignment="Bottom"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=.}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
             </Grid>
