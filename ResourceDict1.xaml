@@ -1,7 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:DierenTuinWPF" xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
-    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" xmlns:utility="clr-namespace:DierenTuinWPF.Utility">
+                    xmlns:local="clr-namespace:DierenTuinWPF"
+                    xmlns:model="clr-namespace:DierenTuinWPF.Models"
+                    xmlns:utility="clr-namespace:DierenTuinWPF.Utility"
+                    xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
+                    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" >
 
     <utility:ProgressBarIntToBrushConverter x:Key="progressBrushConverter"/>
 
@@ -21,6 +24,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
+                <!--Temporary Opacity to 0 to hide text whilst showing code.-->
+                <TextBlock Grid.Column="0" x:Name="tType" Padding="2" HorizontalAlignment="Center" Opacity="0"/>
                 <TextBlock Grid.Column="1"  x:Name="tName" Text="{Binding Name}"/>
                 <TextBlock Grid.Column="2"  x:Name="tEnergy" Text="{Binding Energy}"/>
                 <ProgressBar Grid.Column="3" Minimum="0" Maximum="{Binding MaxEnergy}" Value="{Binding Energy}" 
@@ -28,6 +33,55 @@
                              />
             </Grid>
         </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Type}">
+                <DataTrigger.Value>
+                    <model:AnimalType>Lion</model:AnimalType>
+                </DataTrigger.Value>
+                <Setter TargetName="tType" Property="Text" Value="L"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}">
+                <DataTrigger.Value>
+                    <model:AnimalType>Monkey</model:AnimalType>
+                </DataTrigger.Value>
+                <Setter TargetName="tType" Property="Text" Value="M"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}">
+                <DataTrigger.Value>
+                    <model:AnimalType>Elephant</model:AnimalType>
+                </DataTrigger.Value>
+                <Setter TargetName="tType" Property="Text" Value="E"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MessageTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" x:Name="tbUrgency" Text=" " Padding="0,0,2,0" FontWeight="Medium"/>
+            <TextBlock Grid.Column="1" x:Name="tbText" Text="{Binding Text}"/>
+        </Grid>
+ 
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Urgency}">
+                <DataTrigger.Value>
+                    <model:Urgency>High</model:Urgency>
+                </DataTrigger.Value>
+                <Setter TargetName="tbText" Property="Foreground" Value="Crimson"/>
+                <Setter TargetName="tbUrgency" Property="Foreground" Value="Crimson"/>
+                <Setter TargetName="tbUrgency" Property="Text" Value="!"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Urgency}">
+                <DataTrigger.Value>
+                    <model:Urgency>Medium</model:Urgency>
+                </DataTrigger.Value>
+                <Setter TargetName="tbUrgency" Property="Foreground" Value="Black"/>
+                <Setter TargetName="tbUrgency" Property="Text" Value="!"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
     <!--#endregion-->
 

@@ -9,7 +9,7 @@ namespace DierenTuinWPF.Models
         #region properties
         public override int EnergyPerTick => 3;
         public override int RequiredFoodAmount => 10;
-        public override AnimalTypes Type => AnimalTypes.Monkey;
+        public override AnimalType Type => AnimalType.Monkey;
         public override int MaxEnergy => 120;
         #endregion
 

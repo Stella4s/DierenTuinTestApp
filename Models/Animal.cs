@@ -13,6 +13,7 @@ namespace DierenTuinWPF.Models
         private int _Energy;
         private int _RelativeEnergy;
         private static readonly int EnergyIncrease = 25;
+        private bool FiredIsStarving;
         #endregion
 
         #region public properties
@@ -48,29 +49,59 @@ namespace DierenTuinWPF.Models
         public abstract int MaxEnergy { get; }
         public abstract int EnergyPerTick { get; }
         public abstract int RequiredFoodAmount { get; }
-        public abstract AnimalTypes Type { get; }
+        public abstract AnimalType Type { get; }
         #endregion
 
         public Animal()
         {
             Energy = 100;
             GetRelativeEnergy();
+            FiredIsStarving = false;
         }
 
         public void Eat()
         {
             Energy += EnergyIncrease;
             GetRelativeEnergy();
+
+            //Check if animal still is starving. Reset FiredIsStarving.
+            if (!(RelativeEnergy <= 15))
+                FiredIsStarving = false;          
         }
         public void UseEnergy()
         {
             Energy -= EnergyPerTick;
             GetRelativeEnergy();
+
+            if (Energy <= 0)
+                OnHasDied(EventArgs.Empty);
+            if (RelativeEnergy <= 15)
+                OnIsStarving(EventArgs.Empty);
         }
         private void GetRelativeEnergy()
         {
             RelativeEnergy = (int)((double)Energy / MaxEnergy * 100);
         }
+
+        #region events
+        public event EventHandler IsStarving;
+        protected void OnIsStarving(EventArgs e)
+        {
+            EventHandler handler = IsStarving;
+
+            //Check if FiredIsStarving true, to prevent repeat firing IsStarving.
+            if ((handler != null) && !FiredIsStarving)
+            {
+                FiredIsStarving = true;
+                handler(this, e);
+            }
+        }
+        public event EventHandler HasDied;
+        protected void OnHasDied(EventArgs e)
+        {
+            HasDied?.Invoke(this, e);
+        }
+        #endregion
 
         #region INotifyPropertyChanged Members  
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -81,7 +112,7 @@ namespace DierenTuinWPF.Models
         #endregion
     }
 
-    public enum AnimalTypes
+    public enum AnimalType
     {
         Monkey,
         Lion,

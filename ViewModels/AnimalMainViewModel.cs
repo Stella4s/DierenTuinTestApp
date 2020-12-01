@@ -15,10 +15,12 @@ namespace DierenTuinWPF.ViewModels
     {
         #region private properties
         private ObservableCollection<Animal> _AllAnimals;
-        private AnimalTypes[] _AnimalTypesArr;
-        private AnimalTypes _SelctFeedType;
-        private AnimalTypes _SelctAddType;
+        private AnimalType[] _AnimalTypesArr;
+        private AnimalType _SelctFeedType;
+        private AnimalType _SelctAddType;
         private DispatcherTimer dispatcherTimer;
+        private readonly int maxAnimals = 20;
+        private ObservableCollection<Message> _Messages;
 
         private bool IsAscendSortT;
         private bool IsAscendSortG;
@@ -34,7 +36,7 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public AnimalTypes[] AnimalTypesArr
+        public AnimalType[] AnimalTypesArr
         {
             get { return _AnimalTypesArr; }
             set
@@ -43,7 +45,7 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public AnimalTypes SelctFeedType
+        public AnimalType SelctFeedType
         {
             get { return _SelctFeedType; }
             set
@@ -52,12 +54,21 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public AnimalTypes SelctAddType
+        public AnimalType SelctAddType
         {
             get { return _SelctAddType; }
             set
             {
                 _SelctAddType = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<Message> Messages
+        {
+            get { return _Messages; }
+            set
+            {
+                _Messages = value;
                 OnPropertyChanged();
             }
         }
@@ -79,12 +90,22 @@ namespace DierenTuinWPF.ViewModels
                 new Monkey(),
                 new Elephant()
             };
+            //Add eventHandlers
+            foreach (Animal ani in AllAnimals)
+            { 
+                ani.IsStarving += Animal_IsStarving;
+                ani.HasDied += Animal_HasDied;
+            }
             AllAnimals.CollectionChanged += AllAnimals_CollectionChanged;
-            AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
+
+            AnimalTypesArr = Enum.GetValues(typeof(AnimalType)).Cast<AnimalType>().ToArray();
+
+            Messages = new ObservableCollection<Message>();
 
             IsAscendSortG = true;
             IsAscendSortT = true;
         }
+
         private void AllAnimals_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //Using CommandManager eventhandling
@@ -104,13 +125,17 @@ namespace DierenTuinWPF.ViewModels
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
+            //Cast AllAnimals.ToList to be able to enumerate through it.
+            //Whilst possibly removing animals from collection.
             foreach(Animal animal in AllAnimals.ToList())
             {
                 animal.UseEnergy();
-                if (HasAnimalStarved(animal))
+
+                //Old (more efficient) method to check if animal has starved. Currently replaced with HasDied event.
+                /*if (HasAnimalStarved(animal))
                 {
                     AllAnimals.Remove(animal);
-                }
+                }*/
             }
         }
         private bool HasAnimalStarved(Animal animal)
@@ -123,11 +148,38 @@ namespace DierenTuinWPF.ViewModels
             return false;
         }
         #endregion
+        #region MessageMethods
+        public void Animal_IsStarving(object sender, EventArgs e)
+        {
+            try
+            {
+                Animal animal = sender as Animal;
+                Messages.Add(new Message { Text = (new string(string.Format("{0} is starving.", animal.Name))), Urgency = Urgency.High });
+            }
+            catch (InvalidCastException exc)
+            {
+                Console.WriteLine("Invalid Cast Exception: {0}", exc.Message);
+            }
+        }
+        public void Animal_HasDied(object sender, EventArgs e)
+        {
+            try
+            {
+                Animal animal = sender as Animal;
+                Messages.Add(new Message { Text = (new string(string.Format("{0} has died.", animal.Name))), Urgency = Urgency.Medium });
+                AllAnimals.Remove(animal);
+            }
+            catch (InvalidCastException exc)
+            {
+                Console.WriteLine("Invalid Cast Exception: {0}", exc.Message);
+            }
+        }
+        #endregion
 
         #region ActionMethods
-        public Animal GetAnimal(AnimalTypes animalType)
+        public Animal GetAnimal(AnimalType animalType)
         {
-            var ns = typeof(AnimalTypes).Namespace; //or your classes namespace if different
+            var ns = typeof(AnimalType).Namespace; //or your classes namespace if different
             var typeName = ns + "." + animalType.ToString();
 
             return (Animal)Activator.CreateInstance(Type.GetType(typeName));
@@ -135,8 +187,13 @@ namespace DierenTuinWPF.ViewModels
 
         public void AddAnimal()
         {
-            AllAnimals.Add(GetAnimal(SelctAddType));
+            //Instantiate animal, connect event handler, add animal to collection.
+            var tempAnimal = GetAnimal(SelctAddType);
+            tempAnimal.IsStarving += Animal_IsStarving;
+            tempAnimal.HasDied += Animal_HasDied;
+            AllAnimals.Add(tempAnimal);
         }
+
         /// <summary>
         /// Sorts by group, ascending or descending.
         /// </summary>
@@ -193,6 +250,13 @@ namespace DierenTuinWPF.ViewModels
             }
             return false;
         }
+        public bool HasReachedMaxAnimals()
+        {
+            if (AllAnimals.Count == maxAnimals)
+                return true;
+            else
+                return false;
+        }
         #endregion
         #endregion
 
@@ -227,7 +291,8 @@ namespace DierenTuinWPF.ViewModels
             {
                 if (_AddAnimalCmd == null) {
                     _AddAnimalCmd = new RelayCommand(
-                        p => AddAnimal());
+                        p => AddAnimal(),
+                        p => !HasReachedMaxAnimals());
                 }
                 return _AddAnimalCmd;
             }
