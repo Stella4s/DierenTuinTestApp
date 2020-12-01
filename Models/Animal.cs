@@ -49,7 +49,7 @@ namespace DierenTuinWPF.Models
         public abstract int MaxEnergy { get; }
         public abstract int EnergyPerTick { get; }
         public abstract int RequiredFoodAmount { get; }
-        public abstract AnimalTypes Type { get; }
+        public abstract AnimalType Type { get; }
         #endregion
 
         public Animal()
@@ -112,7 +112,7 @@ namespace DierenTuinWPF.Models
         #endregion
     }
 
-    public enum AnimalTypes
+    public enum AnimalType
     {
         Monkey,
         Lion,

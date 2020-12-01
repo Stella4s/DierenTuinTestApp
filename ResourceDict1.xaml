@@ -2,8 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:DierenTuinWPF"
                     xmlns:model="clr-namespace:DierenTuinWPF.Models"
+                    xmlns:utility="clr-namespace:DierenTuinWPF.Utility"
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite"
-    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" xmlns:utility="clr-namespace:DierenTuinWPF.Utility">
+                    xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" >
 
     <utility:ProgressBarIntToBrushConverter x:Key="progressBrushConverter"/>
 
@@ -23,6 +24,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
+                <!--Temporary Opacity to 0 to hide text whilst showing code.-->
+                <TextBlock Grid.Column="0" x:Name="tType" Padding="2" HorizontalAlignment="Center" Opacity="0"/>
                 <TextBlock Grid.Column="1"  x:Name="tName" Text="{Binding Name}"/>
                 <TextBlock Grid.Column="2"  x:Name="tEnergy" Text="{Binding Energy}"/>
                 <ProgressBar Grid.Column="3" Minimum="0" Maximum="{Binding MaxEnergy}" Value="{Binding Energy}" 
@@ -30,6 +33,26 @@
                              />
             </Grid>
         </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Type}">
+                <DataTrigger.Value>
+                    <model:AnimalType>Lion</model:AnimalType>
+                </DataTrigger.Value>
+                <Setter TargetName="tType" Property="Text" Value="L"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}">
+                <DataTrigger.Value>
+                    <model:AnimalType>Monkey</model:AnimalType>
+                </DataTrigger.Value>
+                <Setter TargetName="tType" Property="Text" Value="M"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}">
+                <DataTrigger.Value>
+                    <model:AnimalType>Elephant</model:AnimalType>
+                </DataTrigger.Value>
+                <Setter TargetName="tType" Property="Text" Value="E"/>
+            </DataTrigger>
+        </DataTemplate.Triggers>
     </DataTemplate>
 
     <DataTemplate x:Key="MessageTemplate">

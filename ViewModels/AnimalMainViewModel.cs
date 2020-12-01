@@ -15,9 +15,9 @@ namespace DierenTuinWPF.ViewModels
     {
         #region private properties
         private ObservableCollection<Animal> _AllAnimals;
-        private AnimalTypes[] _AnimalTypesArr;
-        private AnimalTypes _SelctFeedType;
-        private AnimalTypes _SelctAddType;
+        private AnimalType[] _AnimalTypesArr;
+        private AnimalType _SelctFeedType;
+        private AnimalType _SelctAddType;
         private DispatcherTimer dispatcherTimer;
         private readonly int maxAnimals = 20;
         private ObservableCollection<Message> _Messages;
@@ -36,7 +36,7 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public AnimalTypes[] AnimalTypesArr
+        public AnimalType[] AnimalTypesArr
         {
             get { return _AnimalTypesArr; }
             set
@@ -45,7 +45,7 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public AnimalTypes SelctFeedType
+        public AnimalType SelctFeedType
         {
             get { return _SelctFeedType; }
             set
@@ -54,7 +54,7 @@ namespace DierenTuinWPF.ViewModels
                 OnPropertyChanged();
             }
         }
-        public AnimalTypes SelctAddType
+        public AnimalType SelctAddType
         {
             get { return _SelctAddType; }
             set
@@ -98,7 +98,7 @@ namespace DierenTuinWPF.ViewModels
             }
             AllAnimals.CollectionChanged += AllAnimals_CollectionChanged;
 
-            AnimalTypesArr = Enum.GetValues(typeof(AnimalTypes)).Cast<AnimalTypes>().ToArray();
+            AnimalTypesArr = Enum.GetValues(typeof(AnimalType)).Cast<AnimalType>().ToArray();
 
             Messages = new ObservableCollection<Message>();
 
@@ -177,9 +177,9 @@ namespace DierenTuinWPF.ViewModels
         #endregion
 
         #region ActionMethods
-        public Animal GetAnimal(AnimalTypes animalType)
+        public Animal GetAnimal(AnimalType animalType)
         {
-            var ns = typeof(AnimalTypes).Namespace; //or your classes namespace if different
+            var ns = typeof(AnimalType).Namespace; //or your classes namespace if different
             var typeName = ns + "." + animalType.ToString();
 
             return (Animal)Activator.CreateInstance(Type.GetType(typeName));
